@@ -84,7 +84,7 @@ fn main() -> Result<()> {
     if commit_changes {
         git.commit(
             &signature,
-            &format!("{}: v{}", env!("CARGO_PKG_NAME"), Utc::now().format("%s")),
+            &format!("{}: t{}", env!("CARGO_PKG_NAME"), Utc::now().format("%s")),
         )?;
     }
     Ok(())
