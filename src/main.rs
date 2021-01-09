@@ -134,7 +134,7 @@ fn main() -> Result<()> {
             &format!("{}: v{}", env!("CARGO_PKG_NAME"), Utc::now().format("%s")),
         )?;
     } else {
-        log::info!("There's nothing to commit");
+        log::info!("There's nothing to commit.");
     }
     log::info!("Done!");
     Ok(())

@@ -59,17 +59,31 @@ impl Playlist {
     }
 
     pub fn save(&mut self) -> Result<()> {
+        let mut save_config = false;
+        let config_map = self.config.get_map();
         for video in self.yt_playlist.entries.as_ref().expect("no entries") {
-            self.config.set("contents", &video.title, None);
-            self.config
-                .set("archive", &format!("youtube {}", &video.id), None);
+            if config_map.as_ref().map_or(true, |map| {
+                !map.get("contents").unwrap().contains_key(&video.title)
+            }) {
+                self.config.set("contents", &video.title, None);
+                save_config = true;
+            }
+            let archive_value = format!("youtube {}", &video.id);
+            if config_map.as_ref().map_or(true, |map| {
+                !map.get("archive").unwrap().contains_key(&archive_value)
+            }) {
+                self.config.set("archive", &archive_value, None);
+                save_config = true;
+            }
         }
-        self.config.write(
-            self.path
-                .join(&self.config_file)
-                .to_str()
-                .expect("failed get str from path"),
-        )?;
+        if save_config {
+            self.config.write(
+                self.path
+                    .join(&self.config_file)
+                    .to_str()
+                    .expect("failed get str from path"),
+            )?;
+        }
         Ok(())
     }
 
