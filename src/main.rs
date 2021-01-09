@@ -7,11 +7,35 @@ use anyhow::{Context, Result};
 use chrono::Utc;
 use configparser::ini::Ini;
 use git2::Signature;
+use structopt::StructOpt;
+
+#[derive(Debug, Default, StructOpt)]
+#[structopt(
+    name = env!("CARGO_PKG_NAME"),
+    version = env!("CARGO_PKG_VERSION"),
+    author = env!("CARGO_PKG_AUTHORS"),
+    about = env!("CARGO_PKG_DESCRIPTION"),
+)]
+struct Opt {
+    #[structopt(short, long, value_name = "FILE", help = "Sets the configuration file")]
+    pub config: Option<String>,
+}
 
 fn main() -> Result<()> {
+    let opt = Opt::from_args();
     let mut config = Ini::new();
     config
-        .load("example.ini")
+        .load(
+            &(opt.config.unwrap_or_else(|| {
+                String::from(
+                    dirs::config_dir()
+                        .expect("config dir not found")
+                        .join(format!("{}.ini", env!("CARGO_PKG_NAME")))
+                        .to_str()
+                        .expect("failed get str from path"),
+                )
+            })),
+        )
         .expect("failed to load configuration file");
     let repo_path = config
         .get("general", "git-repo-path")

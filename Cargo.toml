@@ -1,7 +1,8 @@
 [package]
 name = "ytpl"
 version = "0.1.0"
-authors = ["orhun <orhunparmaksiz@gmail.com>"]
+description = "-"
+authors = ["Orhun Parmaksız <orhunparmaksiz@gmail.com>"]
 edition = "2018"
 
 [dependencies]
@@ -10,3 +11,25 @@ anyhow = "1.0.37"
 youtube_dl = "0.6.0"
 git2 = "0.13.15"
 chrono = "0.4.19"
+structopt = "0.3.21"
+dirs = "3.0.1"
+
+[profile.dev]
+opt-level = 0
+debug = true
+panic = "abort"
+
+[profile.test]
+opt-level = 0
+debug = true
+
+[profile.release]
+opt-level = 3
+debug = false
+panic = "abort"
+lto = true
+codegen-units = 1
+
+[profile.bench]
+opt-level = 3
+debug = false
