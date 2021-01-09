@@ -15,6 +15,7 @@ pub struct Playlist {
     pub config_file: String,
     yt_dl_path: String,
     pub yt_playlist: YoutubePlaylist,
+    socket_timeout: u16,
 }
 
 impl Playlist {
@@ -25,6 +26,7 @@ impl Playlist {
         directory: String,
         config_file: String,
         yt_dl_path: String,
+        socket_timeout: u16,
     ) -> Result<Self> {
         let mut config = Ini::new_cs();
         let path = Path::new(&repo_path).join(&directory);
@@ -42,7 +44,7 @@ impl Playlist {
             config,
             yt_playlist: *match YoutubeDl::new(&url)
                 .youtube_dl_path(&yt_dl_path)
-                .socket_timeout("15")
+                .socket_timeout(socket_timeout.to_string())
                 .run()?
             {
                 YoutubeDlOutput::SingleVideo(_) => bail!("{} is not a playlist", name),
@@ -52,6 +54,7 @@ impl Playlist {
             yt_dl_path,
             name,
             url,
+            socket_timeout,
         })
     }
 
@@ -74,6 +77,8 @@ impl Playlist {
         Command::new(&self.yt_dl_path)
             .args(&[
                 &self.url,
+                "--socket-timeout",
+                &self.socket_timeout.to_string(),
                 "--extract-audio",
                 "--audio-format",
                 "mp3",

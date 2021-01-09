@@ -82,6 +82,11 @@ fn main() -> Result<()> {
                         config
                             .get("general", "youtube-dl-path")
                             .unwrap_or_else(|| String::from("youtube-dl")),
+                        config
+                            .get("general", "socket-timeout")
+                            .unwrap_or_default()
+                            .parse()
+                            .unwrap_or(15),
                     )
                     .ok()
                 }
@@ -112,7 +117,7 @@ fn main() -> Result<()> {
                 .map_or("", |v| v.as_ref())
         );
         playlist.download()?;
-        log::info!("Saving tracks...");
+        log::info!("Saving the tracks...");
         log::debug!("Archive file: {:?}", playlist.config_file);
         playlist.save()?;
     }
@@ -123,7 +128,7 @@ fn main() -> Result<()> {
         true
     };
     if commit_changes {
-        log::info!("Committing changes...");
+        log::info!("Committing the changes...");
         git.commit(
             &signature,
             &format!("{}: v{}", env!("CARGO_PKG_NAME"), Utc::now().format("%s")),
