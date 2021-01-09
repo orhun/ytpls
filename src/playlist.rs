@@ -93,6 +93,7 @@ impl Playlist {
                 &self.url,
                 "--socket-timeout",
                 &self.socket_timeout.to_string(),
+                "--ignore-errors",
                 "--extract-audio",
                 "--audio-format",
                 "mp3",
