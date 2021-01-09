@@ -686,7 +686,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ytpl"
+name = "ytpls"
 version = "0.1.0"
 dependencies = [
  "anyhow",
