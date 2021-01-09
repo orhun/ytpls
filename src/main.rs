@@ -67,6 +67,9 @@ fn main() -> Result<()> {
             .into_iter()
             .filter_map(|section| match config.get(&section, "url") {
                 Some(url) => {
+                    if config.get(&section, "fetch") != Some(String::from("true")) {
+                        return None;
+                    }
                     log::info!("Fetching \"{}\"...", section);
                     log::debug!("Playlist URL: {:?}", url);
                     Playlist::new(
