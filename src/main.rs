@@ -72,26 +72,28 @@ fn main() -> Result<()> {
                     }
                     log::info!("Fetching \"{}\"...", section);
                     log::debug!("Playlist URL: {:?}", url);
-                    Playlist::new(
-                        section.clone(),
-                        url,
-                        repo_path.clone(),
-                        config
-                            .get(&section, "dir")
-                            .unwrap_or_else(|| String::from(&section)),
-                        config
-                            .get(&section, "file")
-                            .unwrap_or_else(|| String::from("playlist.ini")),
-                        config
-                            .get("general", "youtube-dl-path")
-                            .unwrap_or_else(|| String::from("youtube-dl")),
-                        config
-                            .get("general", "socket-timeout")
-                            .unwrap_or_default()
-                            .parse()
-                            .unwrap_or(15),
+                    Some(
+                        Playlist::new(
+                            section.clone(),
+                            url,
+                            repo_path.clone(),
+                            config
+                                .get(&section, "dir")
+                                .unwrap_or_else(|| String::from(&section)),
+                            config
+                                .get(&section, "file")
+                                .unwrap_or_else(|| String::from("playlist.ini")),
+                            config
+                                .get("general", "youtube-dl-path")
+                                .unwrap_or_else(|| String::from("youtube-dl")),
+                            config
+                                .get("general", "socket-timeout")
+                                .unwrap_or_default()
+                                .parse()
+                                .unwrap_or(15),
+                        )
+                        .expect("failed to fetch playlist"),
                     )
-                    .ok()
                 }
                 None => None,
             })
