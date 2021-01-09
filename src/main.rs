@@ -126,7 +126,7 @@ fn main() -> Result<()> {
         log::info!("Committing changes...");
         git.commit(
             &signature,
-            &format!("{}: t{}", env!("CARGO_PKG_NAME"), Utc::now().format("%s")),
+            &format!("{}: v{}", env!("CARGO_PKG_NAME"), Utc::now().format("%s")),
         )?;
     } else {
         log::info!("There's nothing to commit");
