@@ -8,13 +8,13 @@ use youtube_dl::{YoutubeDl, YoutubeDlOutput};
 
 #[derive(Clone, Debug)]
 pub struct Playlist {
-    name: String,
+    pub name: String,
     url: String,
     path: PathBuf,
     config: Ini,
-    config_file: String,
+    pub config_file: String,
     yt_dl_path: String,
-    yt_playlist: YoutubePlaylist,
+    pub yt_playlist: YoutubePlaylist,
 }
 
 impl Playlist {
