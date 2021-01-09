@@ -3,7 +3,6 @@ pub mod playlist;
 use crate::playlist::Playlist;
 use anyhow::{Context, Result};
 use configparser::ini::Ini;
-use youtube_dl::YoutubeDl;
 
 fn main() -> Result<()> {
     let mut config = Ini::new();
@@ -13,16 +12,25 @@ fn main() -> Result<()> {
     let repository = config
         .get("general", "repository")
         .context("no repository field")?;
-    for playlist in
+    for mut playlist in
         config
             .sections()
             .into_iter()
             .filter_map(|section| match config.get(&section, "playlist") {
-                Some(url) => Playlist::new(section, url, repository.clone()).ok(),
+                Some(url) => Playlist::new(
+                    section,
+                    url,
+                    repository.clone(),
+                    config
+                        .get("general", "yt_dl_path")
+                        .unwrap_or_else(|| String::from("youtube-dl")),
+                )
+                .ok(),
                 None => None,
             })
     {
-        println!("{:?}", playlist);
+        playlist.download()?;
+        playlist.save()?;
     }
     Ok(())
 }
