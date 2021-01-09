@@ -29,11 +29,17 @@ fn main() -> Result<()> {
         config
             .sections()
             .into_iter()
-            .filter_map(|section| match config.get(&section, "playlist") {
+            .filter_map(|section| match config.get(&section, "url") {
                 Some(url) => Playlist::new(
-                    section,
+                    section.clone(),
                     url,
                     repo_path.clone(),
+                    config
+                        .get(&section, "dir")
+                        .unwrap_or_else(|| String::from(&section)),
+                    config
+                        .get(&section, "file")
+                        .unwrap_or_else(|| String::from("playlist.ini")),
                     config
                         .get("general", "youtube-dl-path")
                         .unwrap_or_else(|| String::from("youtube-dl")),

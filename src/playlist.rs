@@ -12,16 +12,24 @@ pub struct Playlist {
     url: String,
     path: PathBuf,
     config: Ini,
+    config_file: String,
     yt_dl_path: String,
     yt_playlist: YoutubePlaylist,
 }
 
 impl Playlist {
-    pub fn new(name: String, url: String, repo_path: String, yt_dl_path: String) -> Result<Self> {
+    pub fn new(
+        name: String,
+        url: String,
+        repo_path: String,
+        directory: String,
+        config_file: String,
+        yt_dl_path: String,
+    ) -> Result<Self> {
         let mut config = Ini::new_cs();
-        let path = Path::new(&repo_path).join(&name);
+        let path = Path::new(&repo_path).join(&directory);
         fs::create_dir_all(&path)?;
-        let playlist_file = &path.join("playlist.ini");
+        let playlist_file = &path.join(&config_file);
         if playlist_file.exists() {
             config
                 .load(playlist_file.to_str().expect("failed get str from path"))
@@ -40,6 +48,7 @@ impl Playlist {
                 YoutubeDlOutput::SingleVideo(_) => bail!("{} is not a playlist", name),
                 YoutubeDlOutput::Playlist(v) => v,
             },
+            config_file,
             yt_dl_path,
             name,
             url,
@@ -54,7 +63,7 @@ impl Playlist {
         }
         self.config.write(
             self.path
-                .join("playlist.ini")
+                .join(&self.config_file)
                 .to_str()
                 .expect("failed get str from path"),
         )?;
@@ -70,7 +79,7 @@ impl Playlist {
                 "mp3",
                 "--download-archive",
                 self.path
-                    .join("playlist.ini")
+                    .join(&self.config_file)
                     .to_str()
                     .expect("failed get str from path"),
                 "--output",
